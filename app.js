@@ -10,6 +10,7 @@ function notFound(req, res) {
 
 var server = http.createServer( function(req, res) {
   console.log(req.url);
+  console.log(req.headers);
   if (req.url === '/cards' && req.method == 'GET') {
     cards.showCards(req, res);
   } else if (req.url === '/cards' && req.method == 'POST') {
