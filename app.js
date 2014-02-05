@@ -1,12 +1,5 @@
 var http = require('http');
-
-function showCards(req, res) {
-  res.end('Here all the cards!');
-}
-
-function addCard(req, res) {
-  res.end('Adding to cards!');
-}
+var cards = require('./routes/cards');
 
 function notFound(req, res) {
   res.setHeader('Content-Type', 'application/json');
@@ -18,9 +11,9 @@ function notFound(req, res) {
 var server = http.createServer( function(req, res) {
   console.log(req.url);
   if (req.url === '/cards' && req.method == 'GET') {
-    showCards(req, res);
+    cards.showCards(req, res);
   } else if (req.url === '/cards' && req.method == 'POST') {
-    addCard(req, res);
+    cards.addCard(req, res);
   } else {
     notFound(req, res);
   }
