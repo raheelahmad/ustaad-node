@@ -8,25 +8,13 @@ function sendError(msg) {
 }
 
 function showCards(req, res) {
-  var myCard = new Card({
-    title: 'What is node?',
-    frontText: 'Can you tell me what node is?',
-    backText: 'It is the new hotness.'
-  });
-  myCard.save(function (err) {
+  Card.find({}).exec(function(err, result) {
     if (err) {
-      sendError('Could not save new Card');
+      sendError('Error finding cards');
       return;
     }
-    Card.find({}).exec(function(err, result) {
-      if (err) {
-        sendError('Error finding cards');
-        return;
-      }
-      message = "Created: " + result;
-      json = { 'message' : message};
-      sendJSONResponse(res, json);
-    });
+    json = { 'cards' : result};
+    sendJSONResponse(res, json);
   });
 }
 
