@@ -1,0 +1,11 @@
+{
+  "name": "ustaad",
+  "version": "0.0.0",
+  "description": "Helps you learn your cards",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Raheel Ahmad",
+  "license": "BSD-2-Clause"
+}
