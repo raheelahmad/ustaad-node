@@ -20,7 +20,7 @@ var server = http.createServer( function(req, res) {
   }
 });
 
-port = process.env.PORT_NUM || 3100;
+var port = Number(process.env.PORT || 3100);
 server.listen(port, function() {
   console.log('listening on ' + port);
 });
