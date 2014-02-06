@@ -19,8 +19,29 @@ function showCards(req, res) {
 }
 
 function addCard(req, res) {
-  message = {'message': 'Adding to cards!'};
-  sendJSONResponse(res, message);
+  req.setEncoding('utf8');
+  var body = '';
+  req.on('data', function(chunk) {
+    body += chunk;
+  });
+  req.on('end', function(){
+    var rawCard;
+    try {
+      rawCard = JSON.parse(body);
+    } catch (er) {
+      res.statusCode = 400;
+      sendError('Error parsing the new card JSON');
+    }
+    var card = new Card();
+    card.title = rawCard.title;
+    card.frontText = rawCard.frontText;
+    card.backText = rawCard.backText;
+    card.save(function (err) {
+      if (err) { sendError('Error creating the new card'); return; }
+
+      sendJSONResponse(res, {'message': 'Card created'});
+    });
+  });
 }
 
 function sendJSONResponse(res, message) {
