@@ -1,6 +1,33 @@
+var Card = require('../lib/Card');
+
+function sendError(msg) {
+  res.setHeader('Content-Type', 'application/json');
+  res.statusCode = 500;
+  error = JSON.stringify({'error': msg});
+  res.end(error);
+}
+
 function showCards(req, res) {
-  message = { 'message' : 'Here all the cards!' };
-  sendJSONResponse(res, message);
+  var myCard = new Card({
+    title: 'What is node?',
+    frontText: 'Can you tell me what node is?',
+    backText: 'It is the new hotness.'
+  });
+  myCard.save(function (err) {
+    if (err) {
+      sendError('Could not save new Card');
+      return;
+    }
+    Card.find({}).exec(function(err, result) {
+      if (err) {
+        sendError('Error finding cards');
+        return;
+      }
+      message = "Created: " + result;
+      json = { 'message' : message};
+      sendJSONResponse(res, json);
+    });
+  });
 }
 
 function addCard(req, res) {
