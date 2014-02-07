@@ -18,10 +18,11 @@ function setupMongoose() {
 }
 
 var server = http.createServer( function(req, res) {
-  console.log(req.url);
-  if (req.url === '/cards' && req.method == 'GET') {
+  var method = req.method.toLowerCase();
+  console.log(method + ' ' + req.url);
+  if (req.url === '/cards' && method == 'get') {
     cards.showCards(req, res);
-  } else if (req.url === '/cards' && req.method == 'POST') {
+  } else if (req.url === '/cards' && method == 'post') {
     cards.addCard(req, res);
   } else {
     routes.notFound(req, res);

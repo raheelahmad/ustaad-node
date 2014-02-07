@@ -39,7 +39,10 @@ function addCard(req, res) {
     card.save(function (err) {
       if (err) { sendError('Error creating the new card'); return; }
 
-      sendJSONResponse(res, {'message': 'Card created'});
+      sendJSONResponse(res, {
+                'message': 'Card created',
+                'card': card
+      });
     });
   });
 }
