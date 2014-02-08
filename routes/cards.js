@@ -1,6 +1,6 @@
 var Card = require('../lib/Card');
 
-function sendError(msg) {
+function sendError(msg, res) {
   res.setHeader('Content-Type', 'application/json');
   res.statusCode = 500;
   error = JSON.stringify({'error': msg});
@@ -10,7 +10,7 @@ function sendError(msg) {
 function showCards(req, res) {
   Card.find({}).exec(function(err, result) {
     if (err) {
-      sendError('Error finding cards');
+      sendError('Error finding cards', res);
       return;
     }
     json = { 'cards' : result};
@@ -18,32 +18,66 @@ function showCards(req, res) {
   });
 }
 
-function addCard(req, res) {
-  req.setEncoding('utf8');
-  var body = '';
-  req.on('data', function(chunk) {
-    body += chunk;
+function editCard(req, res) {
+  cardFromRequest(req, function(rawCard) {
+    var id = req.url.match(/^\/cards\/(.*)/)[1];
+    Card.findById(id).exec(function(err, result) {
+      var card = result;
+      if (err) {
+        sendError('Error finding card for id ' + err, res);
+        return;
+      }
+      if (rawCard.title) { card.title = rawCard.title; }
+      if (rawCard.frontText) { card.frontText = rawCard.frontText; }
+      if (rawCard.backText) { card.backText = rawCard.backText; }
+      card.save(function(err) {
+        if (err) {
+          sendError('Error saving edited card ', res);
+          return;
+        }
+        sendJSONResponse(res, {
+          'message': 'Card edited',
+          'card': card
+        });
+      });
+    });
   });
-  req.on('end', function(){
-    var rawCard;
-    try {
-      rawCard = JSON.parse(body);
-    } catch (er) {
-      res.statusCode = 400;
-      sendError('Error parsing the new card JSON');
-    }
+}
+
+function addCard(req, res) {
+  cardFromRequest(req, function(rawCard){
     var card = new Card();
     card.title = rawCard.title;
     card.frontText = rawCard.frontText;
     card.backText = rawCard.backText;
     card.save(function (err) {
-      if (err) { sendError('Error creating the new card'); return; }
+      if (err) { sendError('Error creating the new card', res); return; }
 
       sendJSONResponse(res, {
                 'message': 'Card created',
                 'card': card
       });
     });
+  });
+}
+
+// --- Helpers
+
+function cardFromRequest(req, fn) {
+  req.setEncoding('utf8');
+  var body = '';
+  req.on('data', function(chunk) {
+    body += chunk;
+  });
+  req.on('end', function() {
+    var rawCard;
+    try {
+      rawCard = JSON.parse(body);
+    } catch (er) {
+      res.statusCode = 400;
+      sendError('Error parsing the new card JSON', res);
+    }
+    fn(rawCard);
   });
 }
 
@@ -56,3 +90,4 @@ function sendJSONResponse(res, message) {
 
 module.exports.showCards = showCards;
 module.exports.addCard = addCard;
+module.exports.editCard = editCard;
