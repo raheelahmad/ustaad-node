@@ -24,6 +24,8 @@ var server = http.createServer( function(req, res) {
     cards.showCards(req, res);
   } else if (req.url === '/cards' && method == 'post') {
     cards.addCard(req, res);
+  } else if (req.url.match(/^\/cards\/(.*)/) && method == 'put') {
+    cards.editCard(req, res);
   } else {
     routes.notFound(req, res);
   }
