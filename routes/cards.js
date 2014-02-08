@@ -20,7 +20,7 @@ function showCards(req, res) {
 
 function editCard(req, res) {
   cardFromRequest(req, function(rawCard) {
-    var id = req.url.match(/^\/cards\/(.*)/)[1];
+    var id = idFromRequest(req);
     Card.findById(id).exec(function(err, result) {
       var card = result;
       if (err) {
@@ -42,6 +42,22 @@ function editCard(req, res) {
       });
     });
   });
+}
+
+function deleteCard(req, res) {
+  var id = idFromRequest(req);
+  console.log('Delete card');
+  Card.findById(id).exec(function(err, card) {
+    card.remove(function(err, card) {
+      if (err) { 
+        sendError('Error deleting card for id ' + id + ': ' + error, res); 
+        return;
+      }
+      sendJSONResponse(res, {
+        'message': 'Card deleted',
+      });
+    })
+  })
 }
 
 function addCard(req, res) {
@@ -81,6 +97,10 @@ function cardFromRequest(req, fn) {
   });
 }
 
+function idFromRequest(req) {
+  return req.url.match(/^\/cards\/(.*)/)[1];
+}
+
 function sendJSONResponse(res, message) {
   res.setHeader('Content-Type', 'application/json');
   res.statusCode = 200;
@@ -91,3 +111,4 @@ function sendJSONResponse(res, message) {
 module.exports.showCards = showCards;
 module.exports.addCard = addCard;
 module.exports.editCard = editCard;
+module.exports.deleteCard = deleteCard;
