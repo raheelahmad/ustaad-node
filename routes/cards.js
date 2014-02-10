@@ -1,6 +1,7 @@
 var Card = require('../lib/Card');
 
-function sendError(msg, res) {
+function sendError(err, msg, res) {
+  console.log(err);
   res.setHeader('Content-Type', 'application/json');
   res.statusCode = 500;
   error = JSON.stringify({'error': msg});
@@ -10,7 +11,7 @@ function sendError(msg, res) {
 function showCards(req, res) {
   Card.find({}).exec(function(err, result) {
     if (err) {
-      sendError('Error finding cards', res);
+      sendError(err, 'Error finding cards', res);
       return;
     }
     json = { 'cards' : result};
@@ -24,7 +25,7 @@ function editCard(req, res) {
     Card.findById(id).exec(function(err, result) {
       var card = result;
       if (err) {
-        sendError('Error finding card for id ' + err, res);
+        sendError(err, 'Error finding card for id ' + err, res);
         return;
       }
       if (rawCard.title) { card.title = rawCard.title; }
@@ -32,7 +33,7 @@ function editCard(req, res) {
       if (rawCard.backText) { card.backText = rawCard.backText; }
       card.save(function(err) {
         if (err) {
-          sendError('Error saving edited card ', res);
+          sendError(err, 'Error saving edited card ', res);
           return;
         }
         sendJSONResponse(res, {
@@ -50,7 +51,7 @@ function deleteCard(req, res) {
   Card.findById(id).exec(function(err, card) {
     card.remove(function(err, card) {
       if (err) { 
-        sendError('Error deleting card for id ' + id + ': ' + error, res); 
+        sendError(err, 'Error deleting card for id ' + id + ': ' + error, res); 
         return;
       }
       sendJSONResponse(res, {
@@ -67,7 +68,7 @@ function addCard(req, res) {
     card.frontText = rawCard.frontText;
     card.backText = rawCard.backText;
     card.save(function (err) {
-      if (err) { sendError('Error creating the new card', res); return; }
+      if (err) { sendError(err, 'Error creating the new card', res); return; }
 
       sendJSONResponse(res, {
                 'message': 'Card created',
@@ -91,7 +92,7 @@ function cardFromRequest(req, fn) {
       rawCard = JSON.parse(body);
     } catch (er) {
       res.statusCode = 400;
-      sendError('Error parsing the new card JSON', res);
+      sendError(err, 'Error parsing the new card JSON', res);
     }
     fn(rawCard);
   });
