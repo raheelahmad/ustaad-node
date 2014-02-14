@@ -54,16 +54,20 @@ function deleteCard(req, res) {
   var id = idFromRequest(req);
   console.log('Delete card');
   Card.findById(id).exec(function(err, card) {
+    if (err) {
+      sendError(err, 'Error deleting card for id ' + id + ': ' + error, res);
+      return;
+    }
     card.remove(function(err, card) {
-      if (err) { 
-        sendError(err, 'Error deleting card for id ' + id + ': ' + error, res); 
+      if (err) {
+        sendError(err, 'Error deleting card for id ' + id + ': ' + error, res);
         return;
       }
       sendJSONResponse(res, {
         'message': 'Card deleted',
       });
-    })
-  })
+    });
+  });
 }
 
 function addCard(req, res) {
