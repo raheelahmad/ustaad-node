@@ -31,6 +31,11 @@ function editCard(req, res) {
       if (rawCard.title) { card.title = rawCard.title; }
       if (rawCard.frontText) { card.frontText = rawCard.frontText; }
       if (rawCard.backText) { card.backText = rawCard.backText; }
+      if (rawCard.modifiedAt) {
+        card.modifiedAt = rawCard.modifiedAt;
+      } else {
+        card.modifiedAt = Date.now;
+      }
       card.save(function(err) {
         if (err) {
           sendError(err, 'Error saving edited card ', res);
