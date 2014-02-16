@@ -9,43 +9,28 @@ function sendError(err, msg, res) {
 }
 
 function showCards(req, res) {
-  Card.find({}).exec(function(err, result) {
+  Card.findCards(function(err, result) {
     if (err) {
       sendError(err, 'Error finding cards', res);
-      return;
+    } else {
+      var json = { 'cards' : result};
+      sendJSONResponse(res, json);
     }
-    json = { 'cards' : result};
-    sendJSONResponse(res, json);
   });
 }
 
 function editCard(req, res) {
   cardFromRequest(req, function(rawCard) {
     var id = idFromRequest(req);
-    Card.findById(id).exec(function(err, result) {
-      var card = result;
+    Card.editCard(id, rawCard, function(err, card) {
       if (err) {
-        sendError(err, 'Error finding card for id ' + err, res);
-        return;
-      }
-      if (rawCard.title) { card.title = rawCard.title; }
-      if (rawCard.frontText) { card.frontText = rawCard.frontText; }
-      if (rawCard.backText) { card.backText = rawCard.backText; }
-      if (rawCard.modifiedAt) {
-        card.modifiedAt = rawCard.modifiedAt;
+        sendError(err, 'Error saving edited card ', res);
       } else {
-        card.modifiedAt = Date.now;
-      }
-      card.save(function(err) {
-        if (err) {
-          sendError(err, 'Error saving edited card ', res);
-          return;
-        }
         sendJSONResponse(res, {
           'message': 'Card edited',
           'card': card
         });
-      });
+      }
     });
   });
 }
@@ -53,30 +38,20 @@ function editCard(req, res) {
 function deleteCard(req, res) {
   var id = idFromRequest(req);
   console.log('Delete card');
-  Card.findById(id).exec(function(err, card) {
+  Card.deleteCard(id, function(err) {
     if (err) {
       sendError(err, 'Error deleting card for id ' + id + ': ' + error, res);
-      return;
-    }
-    card.remove(function(err, card) {
-      if (err) {
-        sendError(err, 'Error deleting card for id ' + id + ': ' + error, res);
-        return;
-      }
+    } else {
       sendJSONResponse(res, {
         'message': 'Card deleted',
       });
-    });
+    }
   });
 }
 
 function addCard(req, res) {
   cardFromRequest(req, function(rawCard){
-    var card = new Card();
-    card.title = rawCard.title;
-    card.frontText = rawCard.frontText;
-    card.backText = rawCard.backText;
-    card.save(function (err) {
+    Card.createCard(rawCard, function(err, card) {
       if (err) { sendError(err, 'Error creating the new card', res); return; }
 
       sendJSONResponse(res, {
