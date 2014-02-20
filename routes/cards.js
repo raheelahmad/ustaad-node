@@ -21,7 +21,7 @@ function showCards(req, res) {
 
 function editCard(req, res) {
   cardFromRequest(req, function(rawCard) {
-    var id = idFromRequest(req);
+    var id = req.params.id;
     Card.editCard(id, rawCard, function(err, card) {
       if (err) {
         sendError(err, 'Error saving edited card ', res);
@@ -36,7 +36,7 @@ function editCard(req, res) {
 }
 
 function deleteCard(req, res) {
-  var id = idFromRequest(req);
+  var id = req.params.id;
   console.log('Delete card');
   Card.deleteCard(id, function(err) {
     if (err) {
