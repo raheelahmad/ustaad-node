@@ -1,4 +1,4 @@
-var http = require('http');
+var express = require('express');
 var mongoose = require('mongoose');
 
 var routes = require('./routes');
@@ -9,14 +9,28 @@ function setupMongoose() {
                   process.env.MONGOHQ_URI ||
                   'mongodb://localhost/ustaad';
   mongoose.connect(uriString, function(err, res) {
-    if (err) { console.log('ERROR connecting to ' + uriString + 
-                          '. ' + err);
+    if (err) {
+      console.log('ERROR connecting to ' + uriString + '. ' + err);
     } else {
       console.log('Connected to mongoose at ' + uriString);
     }
   });
 }
 
+var app = express();
+
+app.get('/cards', cards.showCards);
+app.post('/cards', cards.addCard);
+app.put('/cards/:id', cards.editCard);
+
+var port = process.env.PORT || 3100;
+app.listen(port, function() {
+  console.log('listening on ' + port);
+  setupMongoose();
+});
+
+
+/**
 var server = http.createServer( function(req, res) {
   var method = req.method.toLowerCase();
   console.log(method + ' ' + req.url);
@@ -32,12 +46,7 @@ var server = http.createServer( function(req, res) {
     routes.notFound(req, res);
   }
 });
-
-var port = Number(process.env.PORT || 3100);
-server.listen(port, function() {
-  console.log('listening on ' + port);
-  setupMongoose();
-});
+*/
 
 // --- Helpers
 
