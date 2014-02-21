@@ -19,6 +19,16 @@ function setupMongoose() {
 
 var app = express();
 
+// configuration
+app.use(express.json());
+app.use(express.urlencoded());
+
+app.use(function(req, res, next) {
+  res.setHeader('Content-Type', 'application/json');
+  message = JSON.stringify({message: 'Not a valid path'});
+  res.send(404, message);
+});
+
 app.get('/cards', cards.showCards);
 app.post('/cards', cards.addCard);
 app.put('/cards/:id', cards.editCard);
