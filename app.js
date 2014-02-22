@@ -7,8 +7,11 @@ var db = require('./config/database.js');
 var app = express();
 
 // configuration
-app.use(express.json());
-app.use(express.urlencoded());
+app.configure(function() {
+  app.use(express.logger());
+  app.use(express.json());
+  app.use(express.urlencoded());
+});
 
 // Route handlers
 app.get('/cards', cards.showCards);
