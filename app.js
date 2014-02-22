@@ -1,21 +1,8 @@
 var express = require('express');
-var mongoose = require('mongoose');
 
 var routes = require('./routes');
 var cards = require('./routes/cards');
-
-function setupMongoose() {
-  var uriString = process.env.MONGOLAB_URI ||
-                  process.env.MONGOHQ_URI ||
-                  'mongodb://localhost/ustaad';
-  mongoose.connect(uriString, function(err, res) {
-    if (err) {
-      console.log('ERROR connecting to ' + uriString + '. ' + err);
-    } else {
-      console.log('Connected to mongoose at ' + uriString);
-    }
-  });
-}
+var db = require('./config/database.js');
 
 var app = express();
 
@@ -38,7 +25,7 @@ app.use(function(req, res, next) {
 var port = process.env.PORT || 3100;
 app.listen(port, function() {
   console.log('listening on ' + port);
-  setupMongoose();
+  db.setup();
 });
 
 
