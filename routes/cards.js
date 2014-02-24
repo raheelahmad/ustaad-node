@@ -1,4 +1,7 @@
 var Card = require('../lib/Card');
+var index = require('./index');
+var sendError = index.sendError;
+var sendJSONResponse = index.sendJSONResponse;
 
 // --- CRUD routes
 
@@ -58,21 +61,6 @@ function addCard(req, res) {
 
 function idFromRequest(req) {
   return req.url.match(/^\/cards\/(.*)/)[1];
-}
-
-function sendJSONResponse(res, message) {
-  res.setHeader('Content-Type', 'application/json');
-  res.statusCode = 200;
-  message = JSON.stringify(message);
-  res.end(message);
-}
-
-function sendError(err, msg, res) {
-  console.log(err);
-  res.setHeader('Content-Type', 'application/json');
-  res.statusCode = 500;
-  error = JSON.stringify({'error': msg});
-  res.end(error);
 }
 
 module.exports.showCards = showCards;
