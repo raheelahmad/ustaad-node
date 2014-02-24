@@ -10,6 +10,8 @@
   "license": "BSD-2-Clause",
   "dependencies": {
     "mongoose": "~3.8.6",
-    "express": "3.4.8"
+    "express": "3.4.8",
+    "credential": "~0.2.5",
+    "bcrypt": "~0.7.7"
   }
 }
