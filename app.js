@@ -1,6 +1,6 @@
 var express = require('express');
 
-var routes = require('./routes');
+var user = require('./routes/user');
 var cards = require('./routes/cards');
 var db = require('./config/database.js');
 
@@ -18,6 +18,8 @@ app.get('/cards', cards.showCards);
 app.post('/cards', cards.addCard);
 app.put('/cards/:id', cards.editCard);
 app.delete('/cards/:id', cards.deleteCard);
+
+app.post('/user', user.registerUser);
 
 app.use(function(req, res, next) {
   res.setHeader('Content-Type', 'application/json');
