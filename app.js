@@ -20,6 +20,7 @@ app.put('/cards/:id', cards.editCard);
 app.delete('/cards/:id', cards.deleteCard);
 
 app.post('/user', user.registerUser);
+app.post('/login', user.signinUser);
 
 app.use(function(req, res, next) {
   res.setHeader('Content-Type', 'application/json');
