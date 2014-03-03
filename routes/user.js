@@ -1,4 +1,6 @@
+var redis = require('../config/database').redis;
 var User = require('../lib/User');
+var mongoose = require('mongoose');
 var index = require('./index');
 var sendError = index.sendError;
 var sendJSONResponse = index.sendJSONResponse;
@@ -24,9 +26,12 @@ function signinUser(req, res) {
     if (err) {
       sendError(err, 'Error signing in', res);
     } else {
+      var token = mongoose.Types.ObjectId();
+      redis.set(user._id, token);
+      console.log('Token : ' + token);
       sendJSONResponse(res, {
         message: 'User was signed in',
-        token: user._id.toHexString()
+        token: token
       });
     }
   });

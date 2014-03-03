@@ -13,5 +13,8 @@
     "express": "3.4.8",
     "credential": "~0.2.5",
     "bcrypt": "~0.7.7",
+    "mocha": "~1.17.1",
+    "redis": "~0.10.1",
+    "redis-url": "~0.2.0"
   }
 }

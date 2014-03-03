@@ -1,9 +1,12 @@
 var mongoose = require('mongoose');
 
+var redisPort = process.env.REDISTOGO_URL || 'localhost';
+var redisClient = require('redis-url').connect();
+
 function setupMongoose() {
   var uriString = process.env.MONGOLAB_URI ||
                   process.env.MONGOHQ_URI ||
-                  'mongodb://localhost/ustaad';
+                  'mongodb://localhost/ustaad' + '_' + process.env.NODE_ENV;
   mongoose.connect(uriString, function(err, res) {
     if (err) {
       console.log('ERROR connecting to ' + uriString + '. ' + err);
@@ -13,5 +16,14 @@ function setupMongoose() {
   });
 }
 
-module.exports.setup = setupMongoose;
+function setupRedis() {
+}
+
+function setup() {
+  setupMongoose();
+  setupRedis();
+}
+
+module.exports.setup = setup;
+module.exports.redis = redisClient;
 
