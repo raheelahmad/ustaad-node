@@ -12,9 +12,7 @@ function registerUser(req, res) {
     if (err) {
       sendError(err, 'Error signing up', res);
     } else {
-      sendJSONResponse(res, {
-        message: 'User was signed up',
-      });
+      loginUserWithCredentials(username, password, true, res);
     }
   });
 }
@@ -22,15 +20,22 @@ function registerUser(req, res) {
 function signinUser(req, res) {
   var username = req.body.username;
   var password = req.body.password;
+  loginUserWithCredentials(username, password, false, res);
+}
+
+function loginUserWithCredentials(username, password, firstTime, res) {
   User.authenticateUser(username, password, function(err, user) {
+    var msg;
     if (err) {
-      sendError(err, 'Error signing in', res);
+      msg = firstTime ? 'Error signing up' : 'Error logging in';
+      sendError(err, msg, res);
     } else {
       var token = mongoose.Types.ObjectId();
       redis.set(token, user._id);
       console.log('Token : ' + token);
+      msg = firstTime ? 'User was signed up' : 'User was logged in';
       sendJSONResponse(res, {
-        message: 'User was signed in',
+        message: msg,
         token: token
       });
     }
