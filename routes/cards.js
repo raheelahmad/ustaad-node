@@ -6,7 +6,7 @@ var sendJSONResponse = index.sendJSONResponse;
 // --- CRUD routes
 
 function showCards(req, res) {
-  Card.findCards(function(err, result) {
+  Card.findCards(req.userId, function(err, result) {
     if (err) {
       sendError(err, 'Error finding cards', res);
     } else {
@@ -19,7 +19,7 @@ function showCards(req, res) {
 function editCard(req, res) {
   var rawCard = req.body;
   var id = req.params.id;
-  Card.editCard(id, rawCard, function(err, card) {
+  Card.editCard(req.userId, id, rawCard, function(err, card) {
     if (err) {
       sendError(err, 'Error saving edited card ', res);
     } else {
@@ -34,7 +34,7 @@ function editCard(req, res) {
 function deleteCard(req, res) {
   var id = req.params.id;
   console.log('Delete card');
-  Card.deleteCard(id, function(err) {
+  Card.deleteCard(req.userId, id, function(err) {
     if (err) {
       sendError(err, 'Error deleting card for id ' + id + ': ' + err, res);
     } else {
@@ -47,7 +47,7 @@ function deleteCard(req, res) {
 
 function addCard(req, res) {
   var rawCard = req.body;
-  Card.createCard(rawCard, function(err, card) {
+  Card.createCard(req.userId, rawCard, function(err, card) {
     if (err) { sendError(err, 'Error creating the new card', res); return; }
 
     sendJSONResponse(res, {
