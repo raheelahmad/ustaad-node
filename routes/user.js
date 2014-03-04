@@ -27,7 +27,7 @@ function signinUser(req, res) {
       sendError(err, 'Error signing in', res);
     } else {
       var token = mongoose.Types.ObjectId();
-      redis.set(user._id, token);
+      redis.set(token, user._id);
       console.log('Token : ' + token);
       sendJSONResponse(res, {
         message: 'User was signed in',
