@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 
-var redisClient = require('redis-url');
+var redisPort = process.env.REDISTOGO_URL || 'localhost';
+var redisClient = require('redis-url').connect(redisPort);
 
 function setupMongoose() {
   var uriString = process.env.MONGOLAB_URI ||
@@ -16,9 +17,6 @@ function setupMongoose() {
 }
 
 function setupRedis() {
-  var redisPort = process.env.REDISTOGO_URL || 'localhost';
-  redisClient.connect(redisPort);
-  console.log('Listening to redis on ' + redisPort);
 }
 
 function setup() {
