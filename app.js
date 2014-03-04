@@ -36,6 +36,7 @@ app.use(function(err, req, res, next) {
     res.statusCode = 500;
   }
   res.send(response);
+  console.log('Error: ' + err);
 });
 
 var port = process.env.PORT || 3100;
