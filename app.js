@@ -28,10 +28,26 @@ app.delete('/cards/:id', cards.deleteCard);
 app.post('/user', user.registerUser);
 app.post('/login', user.signinUser);
 
+// GET catch all
+app.get('*', function(req, res, next) {
+  lastRouteHandler(next, 'GET');
+})
+
+app.post('*', function(req, res, next) {
+  lastRouteHandler(next, 'POST');
+});
+
+function lastRouteHandler(next, method) {
+  var err = new Error();
+  err.statusCode = 404;
+  err.message = 'Could not ' + method + req.route.path;
+  next(err);
+}
+
 app.use(function(err, req, res, next) {
   res.setHeader('Content-Type', 'application/json');
-  message = err.message || 'Server error';
-  response = JSON.stringify({message: message});
+  var message = err.message || 'Server error';
+  var response = JSON.stringify({message: message});
   if (res.statusCode === 0) {
     res.statusCode = 500;
   }
@@ -44,29 +60,3 @@ app.listen(port, function() {
   console.log('listening on ' + port);
   db.setup();
 });
-
-
-/**
-var server = http.createServer( function(req, res) {
-  var method = req.method.toLowerCase();
-  console.log(method + ' ' + req.url);
-  if (req.url === '/cards' && method == 'get') {
-    cards.showCards(req, res);
-  } else if (req.url === '/cards' && method == 'post') {
-    cards.addCard(req, res);
-  } else if (isCardIdRequest(req) && method == 'put') {
-    cards.editCard(req, res);
-  } else if (isCardIdRequest(req) && method == 'delete') {
-    cards.deleteCard(req, res);
-  } else {
-    routes.notFound(req, res);
-  }
-});
-*/
-
-// --- Helpers
-
-function isCardIdRequest(req) {
-  return req.url.match(/^\/cards\/(.*)/);
-}
-

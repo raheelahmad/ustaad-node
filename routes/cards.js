@@ -1,6 +1,5 @@
 var Card = require('../lib/Card');
 var index = require('./index');
-var sendError = index.sendError;
 var sendJSONResponse = index.sendJSONResponse;
 
 // --- CRUD routes
@@ -8,7 +7,8 @@ var sendJSONResponse = index.sendJSONResponse;
 function showCards(req, res) {
   Card.findCards(req.userId, function(err, result) {
     if (err) {
-      sendError(err, 'Error finding cards', res);
+      err.message = 'Error finding cards';
+      next(err);
     } else {
       var json = { 'cards' : result};
       sendJSONResponse(res, json);
@@ -21,7 +21,8 @@ function editCard(req, res) {
   var id = req.params.id;
   Card.editCard(req.userId, id, rawCard, function(err, card) {
     if (err) {
-      sendError(err, 'Error saving edited card ', res);
+      err.message = 'Error saving edited card ';
+      next(err);
     } else {
       sendJSONResponse(res, {
         'message': 'Card edited',
@@ -36,7 +37,8 @@ function deleteCard(req, res) {
   console.log('Delete card');
   Card.deleteCard(req.userId, id, function(err) {
     if (err) {
-      sendError(err, 'Error deleting card for id ' + id + ': ' + err, res);
+      err.message = 'Error deleting card for id ' + id;
+      next(err);
     } else {
       sendJSONResponse(res, {
         'message': 'Card deleted',
@@ -48,12 +50,15 @@ function deleteCard(req, res) {
 function addCard(req, res) {
   var rawCard = req.body;
   Card.createCard(req.userId, rawCard, function(err, card) {
-    if (err) { sendError(err, 'Error creating the new card', res); return; }
-
-    sendJSONResponse(res, {
-      'message': 'Card created',
-      'card': card
-    });
+    if (err) {
+      err.message = 'Error creating the new card';
+      next(err);
+    } else {
+      sendJSONResponse(res, {
+        'message': 'Card created',
+        'card': card
+      });
+    }
   });
 }
 
