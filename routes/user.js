@@ -10,6 +10,7 @@ function registerUser(req, res, next) {
   User.registerUser(username, password, function(err, user) {
     if (err) {
       err.message = 'Error registering user' + err.message;
+      err.statusCode = 401;
       next(err);
     } else {
       loginUserWithCredentials(username, password, true, res);
@@ -28,6 +29,7 @@ function loginUserWithCredentials(username, password, firstTime, res, next) {
     if (err) {
       var message = firstTime ? 'Error signing up. ' : 'Error logging in. ';
       err.message = message + err.message;
+      err.statusCode = 401;
       next(err);
     } else {
       var token = mongoose.Types.ObjectId();
